@@ -19,9 +19,10 @@
 
 ### 运行时要求
 - **Windows 10/11** 或 **Linux** 或 **macOS**
-- **[.NET 10.0 运行时](https://dotnet.microsoft.com/download/dotnet/10.0)**（必须安装）
+- 使用 Releases 中的 Native AOT 单文件版本时，通常不需要额外安装 .NET 运行时
+- 使用源码运行、`dotnet tool` 或框架依赖发布版本时，需要 **[.NET 10.0 运行时/SDK](https://dotnet.microsoft.com/download/dotnet/10.0)**
 
-> 本版本基于 .NET 10 编译。如果你运行时报错 `You must install or update .NET to run this application`，说明没有安装 .NET 运行时，请下载安装：
+> 本版本基于 .NET 10 编译。如果你运行时报错 `You must install or update .NET to run this application`，说明当前使用的是框架依赖版本且没有安装 .NET 运行时，请下载安装：
 > - Windows: https://dotnet.microsoft.com/en-us/download/dotnet/10.0
 > - 或使用命令：`winget install Microsoft.DotNET.Runtime.10`
 
@@ -45,6 +46,8 @@
 5. 开始使用
 
 ### 方法二：通过 dotnet tool 安装
+> 注意：`dotnet tool install --global BBDown` 安装的是 NuGet 上发布的工具包，版本可能与本社区维护分支的 GitHub Release 不完全一致。需要本分支最新修复时，优先使用 Releases 页面下载。
+
 ```
 dotnet tool install --global BBDown
 ```
@@ -54,7 +57,53 @@ dotnet tool install --global BBDown
 dotnet tool install --global BBDown
 ```
 
+# 从源码构建
+
+## 基础构建
+仓库根目录的 `global.json` 已固定 .NET SDK 主版本为 10.0，建议安装 .NET 10 SDK 后再构建。
+
+```
+git clone https://github.com/f22363712-dotcom/BBDown.git
+cd BBDown
+dotnet build BBDown.sln -c Release
+```
+
+## Native AOT 发布
+本仓库默认启用 Native AOT 发布。发布前请准备对应平台的本机编译工具链：
+
+- Windows: 安装 Visual Studio 的 “Desktop development with C++” 工作负载
+- Linux: 安装 `clang`、`zlib1g-dev` 等 Native AOT 依赖
+- macOS: 安装 Xcode Command Line Tools
+
+常用发布命令：
+```
+dotnet publish BBDown -r win-x64 -c Release -o artifact
+dotnet publish BBDown -r linux-x64 -c Release -o artifact
+dotnet publish BBDown -r osx-arm64 -c Release -o artifact
+```
+
+## Docker
+```
+docker build -t bbdown .
+docker run --rm -p 23333:23333 bbdown
+```
+
+容器默认以 API 服务器模式启动：`BBDown serve -l http://0.0.0.0:23333`。
+
+## 发版前检查
+发版前建议至少完成以下检查：
+
+```
+dotnet build BBDown.sln -c Release
+dotnet run --project BBDown -- --help
+dotnet publish BBDown -r win-x64 -c Release -o artifact
+```
+
+如果 Native AOT 发布时报错 `Platform linker not found`，请先安装当前平台所需的本机编译工具链。GitHub Actions 会自动构建 Windows、Linux、macOS 的 x64/arm64 产物，并对 x64 主产物执行 `--help` 启动自检。
+
 # 详细使用教程
+
+更完整的部署、知识库场景和发版说明见 [docs/usage-guide.md](./docs/usage-guide.md)。
 
 ## 第一步：登录 B 站账号
 
@@ -167,7 +216,7 @@ Options:
   -app, --use-app-api                            使用APP端解析模式
   -intl, --use-intl-api                          使用国际版(东南亚视频)解析模式
   --use-mp4box                                   使用MP4Box来混流
-  -e, --encoding-priority <encoding-priority>    视频编码的选择优先级, 用逗号分割
+  -e, --encoding-priority <encoding-priority>    视频及音频编码的选择优先级, 用逗号分割
   -q, --dfn-priority <dfn-priority>              画质优先级,用逗号分隔
   -info, --only-show-info                        仅解析而不进行下载
   --show-all                                     展示所有分P标题
@@ -184,20 +233,34 @@ Options:
   --skip-mux                                     跳过混流步骤
   --skip-subtitle                                跳过字幕下载
   --skip-cover                                   跳过封面下载
-  --force-http                                   下载音视频时强制使用HTTP协议替换HTTPS
+  --force-http                                   下载音视频时强制使用HTTP协议替换HTTPS(默认开启)
   -dd, --download-danmaku                        下载弹幕
-  --skip-ai                                      跳过AI字幕下载
-  --video-ascending                              视频升序
-  --audio-ascending                              音频升序
-  --allow-pcdn                                   不替换PCDN域名
+  -ddf, --download-danmaku-formats <formats>     指定需下载的弹幕格式, 用逗号分隔, 可选 xml/ass
+  --skip-ai                                      跳过AI字幕下载(默认开启)
+  --video-ascending                              视频升序(最小体积优先)
+  --audio-ascending                              音频升序(最小体积优先)
+  --allow-pcdn                                   不替换PCDN域名, 仅在正常情况与--upos-host均无法下载时使用
   -F, --file-pattern <file-pattern>              自定义单P存储文件名
   -M, --multi-file-pattern <multi-file-pattern>  自定义多P存储文件名
   -p, --select-page <select-page>                选择指定分p或分p范围
   --language <language>                          设置混流的音频语言
+  -ua, --user-agent <user-agent>                 指定user-agent, 否则使用随机user-agent
   -c, --cookie <cookie>                          设置字符串cookie
   -token, --access-token <access-token>          设置access_token
+  --aria2c-args <aria2c-args>                    调用aria2c的附加参数
   --work-dir <work-dir>                          设置程序的工作目录
   --ffmpeg-path <ffmpeg-path>                    设置ffmpeg的路径
+  --mp4box-path <mp4box-path>                    设置mp4box的路径
+  --aria2c-path <aria2c-path>                    设置aria2c的路径
+  --upos-host <upos-host>                        自定义upos服务器
+  --force-replace-host                           强制替换下载服务器host(默认开启)
+  --save-archives-to-file                        将下载过的视频记录到本地文件中, 用于后续跳过下载同个视频
+  --delay-per-page <delay-per-page>              设置下载合集分P之间的下载间隔时间
+  --host <host>                                  指定BiliPlus host
+  --ep-host <ep-host>                            指定BiliPlus EP host
+  --tv-host <tv-host>                            自定义tv端接口请求Host
+  --area <area>                                  使用BiliPlus时指定区域(hk|tw|th)
+  --config-file <config-file>                    读取指定的BBDown本地配置文件
   --version                                      显示版本信息
   -?, -h, --help                                 显示帮助信息
 
@@ -227,7 +290,8 @@ Commands:
 | `<audioBandwidth>` | 音频码率 |
 | `<ownerName>` | 上传者名称 |
 | `<ownerMid>` | 上传者mid |
-| `<publishDate>` | 发布时间 |
+| `<publishDate>` | 收藏夹/番剧/合集发布时间 |
+| `<videoDate>` | 视频发布时间(分p视频发布时间与`<publishDate>`相同) |
 | `<apiType>` | API类型 |
 
 # 配置文件

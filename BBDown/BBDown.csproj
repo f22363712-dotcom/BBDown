@@ -6,7 +6,9 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>1.6.4</Version>
     <Description>BBDown - 社区维护版. 一个免费且便捷高效的哔哩哔哩下载/解析软件.</Description>
-    <PackageProjectUrl>https://github.com/nilaoda/BBDown</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/f22363712-dotcom/BBDown</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/f22363712-dotcom/BBDown</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <StartupObject></StartupObject>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>BBDown</ToolCommandName>

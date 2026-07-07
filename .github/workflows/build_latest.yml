@@ -3,8 +3,7 @@ name: Build Latest
 on: [push,workflow_dispatch]
 
 env:
-  DOTNET_SDK_VERSION: "9.0.306"
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+  DOTNET_SDK_VERSION: "10.0.100"
 
 jobs:
   set-date:
@@ -21,10 +20,10 @@ jobs:
     needs: set-date
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
 
       - name: Set up dotnet
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
 
@@ -35,6 +34,9 @@ jobs:
         run: |
           dotnet publish BBDown -r win-x64 -c Release -o artifact
           dotnet publish BBDown -r win-arm64 -c Release -o artifact-arm64
+
+      - name: Smoke test [win-x64]
+        run: .\artifact\BBDown.exe --help
 
       - name: Package [win]
         run: |
@@ -60,7 +62,7 @@ jobs:
     needs: set-date
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
       
       - name: Build x64 in Ubuntu 18.04 container (for glibc 2.27 compatibility)
         run: |
@@ -87,6 +89,9 @@ jobs:
               # 编译 Native AOT 输出到挂载的 artifact 目录
               dotnet publish BBDown -r linux-x64 -c Release -o /workspace/artifact
             "
+
+      - name: Smoke test [linux-x64]
+        run: ./artifact/BBDown --help
       
       - name: Build arm64 in Ubuntu 18.04 container (for glibc 2.27 compatibility)
         run: |
@@ -134,10 +139,10 @@ jobs:
     needs: set-date
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
 
       - name: Set up dotnet
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
 
