@@ -115,65 +115,68 @@ BBDown login
 
 ### 使用 Cookie 登录（手动方式）
 ```
-BBDown -c "SESSDATA=******" "视频地址"
+BBDown -c "SESSDATA=******" "视频链接或BV号"
 ```
 
 ## 第二步：下载视频
 
 ### 下载普通视频
+BBDown 的 `<url>` 参数既可以传完整视频链接，也可以只传视频编号，例如 `BVxxxxxxxxxx`。
+
 ```
-BBDown "https://www.bilibili.com/video/BV1qt4y1X7TW"
+BBDown "https://www.bilibili.com/video/BVxxxxxxxxxx"
+BBDown "BVxxxxxxxxxx"
 ```
 
 ### 仅下载音频
 ```
-BBDown --audio-only "https://www.bilibili.com/video/BV1jy421B7Qz"
+BBDown --audio-only "视频链接或BV号"
 ```
 
 ### 仅下载视频（无音频）
 ```
-BBDown --video-only "https://www.bilibili.com/video/BV1qt4y1X7TW"
+BBDown --video-only "视频链接或BV号"
 ```
 
 ### 仅下载弹幕 / 封面 / 字幕
 ```
-BBDown --danmaku-only "视频地址"
-BBDown --cover-only "视频地址"
-BBDown --sub-only "视频地址"
+BBDown --danmaku-only "视频链接或BV号"
+BBDown --cover-only "视频链接或BV号"
+BBDown --sub-only "视频链接或BV号"
 ```
 
 ### 使用 TV 接口下载（无水印片源）
 ```
-BBDown -tv "https://www.bilibili.com/video/BV1qt4y1X7TW"
+BBDown -tv "视频链接或BV号"
 ```
 
 ### 指定画质
 ```
-BBDown -q "8K 超高清, 1080P 高码率, HDR 真彩, 杜比视界" "视频地址"
+BBDown -q "8K 超高清, 1080P 高码率, HDR 真彩, 杜比视界" "视频链接或BV号"
 ```
 
 ### 指定编码格式
 ```
-BBDown -e "hevc,av1,avc" "视频地址"
+BBDown -e "hevc,av1,avc" "视频链接或BV号"
 ```
 
 ## 多分P下载
 
 ```
 # 单个分P
-BBDown -p 10 "视频地址"
+BBDown -p 10 "视频链接或BV号"
 
 # 多个分P
-BBDown -p 1,2,10 "视频地址"
+BBDown -p 1,2,10 "视频链接或BV号"
 
 # 范围分P
-BBDown -p 1-10 "视频地址"
+BBDown -p 1-10 "视频链接或BV号"
 
 # 下载所有分P（番剧全集）
 BBDown -p ALL "https://www.bilibili.com/bangumi/play/ss33073"
 
 # 下载最新分P
-BBDown -p LAST "视频地址"
+BBDown -p LAST "视频链接或BV号"
 ```
 
 ## 合集/列表/收藏夹下载
@@ -191,12 +194,12 @@ BBDown -p ALL "https://www.bilibili.com/bangumi/play/ss33073"
 
 ## 仅查看视频信息（不下载）
 ```
-BBDown -info "视频地址"
+BBDown -info "视频链接或BV号"
 ```
 
 ## 使用 aria2c 加速下载
 ```
-BBDown -aria2 "视频地址"
+BBDown -aria2 "视频链接或BV号"
 ```
 
 # 命令行参考
@@ -321,7 +324,7 @@ BBDown支持读取本地配置文件，默认读取程序同目录下的 `BBDown
 BBDown login
 
 # 手动加载cookie
-BBDown -c "SESSDATA=******" "https://www.bilibili.com/video/BV1qt4y1X7TW"
+BBDown -c "SESSDATA=******" "视频链接或BV号"
 ```
 
 ## TV鉴权
@@ -330,13 +333,13 @@ BBDown -c "SESSDATA=******" "https://www.bilibili.com/video/BV1qt4y1X7TW"
 BBDown logintv
 
 # 手动加载token
-BBDown -tv -token "******" "https://www.bilibili.com/video/BV1qt4y1X7TW"
+BBDown -tv -token "******" "视频链接或BV号"
 ```
 
 ## APP鉴权
 抓包获取access_token后：
 ```
-BBDown -app -token "******" "https://www.bilibili.com/video/BV1qt4y1X7TW"
+BBDown -app -token "******" "视频链接或BV号"
 ```
 
 # API服务器

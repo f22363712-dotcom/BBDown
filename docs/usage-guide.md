@@ -86,39 +86,42 @@ BBDown -tv -token "******" "视频链接"
 
 ```bash
 BBDown "https://www.bilibili.com/video/BVxxxxxx"
+BBDown "BVxxxxxx"
 ```
+
+`<url>` 参数不要求必须传完整链接。普通视频可以只传 BV 号；番剧、合集、收藏夹等场景通常建议传完整链接。
 
 使用 TV 接口：
 
 ```bash
-BBDown -tv "视频链接"
+BBDown -tv "视频链接或BV号"
 ```
 
 仅下载音频：
 
 ```bash
-BBDown --audio-only "视频链接"
+BBDown --audio-only "视频链接或BV号"
 ```
 
 仅下载弹幕、字幕或封面：
 
 ```bash
-BBDown --danmaku-only "视频链接"
-BBDown --sub-only "视频链接"
-BBDown --cover-only "视频链接"
+BBDown --danmaku-only "视频链接或BV号"
+BBDown --sub-only "视频链接或BV号"
+BBDown --cover-only "视频链接或BV号"
 ```
 
 下载弹幕并保留视频：
 
 ```bash
-BBDown -dd "视频链接"
+BBDown -dd "视频链接或BV号"
 ```
 
 指定画质与编码优先级：
 
 ```bash
-BBDown -q "8K 超高清, 1080P 高码率, HDR 真彩, 杜比视界" "视频链接"
-BBDown -e "hevc,av1,avc,flac,eac3,m4a" "视频链接"
+BBDown -q "8K 超高清, 1080P 高码率, HDR 真彩, 杜比视界" "视频链接或BV号"
+BBDown -e "hevc,av1,avc,flac,eac3,m4a" "视频链接或BV号"
 ```
 
 ## 四、批量与分 P
